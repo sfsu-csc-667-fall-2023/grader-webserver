@@ -73,7 +73,7 @@ public class HttpRequestTest {
   }
 
   @Test
-  public void testGetContentLengthWhenNoHeader() {
+  public void testGetContentLengthWhenNoContentLengthHeader() {
     HttpRequest request = new HttpRequest();
 
     assertEquals(0, request.getContentLength());
@@ -113,7 +113,7 @@ public class HttpRequestTest {
     HttpRequest request = new HttpRequest();
 
     byte[] result = request.getBody();
-    assertEquals(0, result.length);
+    assertEquals(0, result.length, "HttpRequest#getBody() should return an empty byte[] when no body is present.");
   }
 
   private Stream<Arguments> provideHttpMethods() {

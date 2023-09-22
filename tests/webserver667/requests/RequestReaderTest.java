@@ -118,6 +118,6 @@ public class RequestReaderTest {
         RequestReaderTestProviders.createTestStream("GET /index.html HTTP/1.1\r\n\r\n"));
     HttpRequest request = reader.getRequest();
 
-    assertNull(request.getBody());
+    assertEquals(0, request.getBody().length);
   }
 }
