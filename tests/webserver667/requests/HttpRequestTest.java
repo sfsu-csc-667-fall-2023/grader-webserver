@@ -116,7 +116,7 @@ public class HttpRequestTest {
     assertEquals(0, result.length, "HttpRequest#getBody() should return an empty byte[] when no body is present.");
   }
 
-  private Stream<Arguments> provideHttpMethods() {
+  private static Stream<Arguments> provideHttpMethods() {
     return Stream.of(
         Arguments.of(HttpMethods.GET),
         Arguments.of(HttpMethods.HEAD),
@@ -125,19 +125,19 @@ public class HttpRequestTest {
         Arguments.of(HttpMethods.DELETE));
   }
 
-  private Stream<Arguments> provideURIs() {
+  private static Stream<Arguments> provideURIs() {
     return Stream.of(
         Arguments.of("/index.html", "/index.html"),
         Arguments.of("/index.html?this=is&a=querystring", "/index.html"));
   }
 
-  private Stream<Arguments> provideQueryStringURIs() {
+  private static Stream<Arguments> provideQueryStringURIs() {
     return Stream.of(
         Arguments.of("/index.html", null),
         Arguments.of("/index.html?this=is&a=querystring", "this=is&a=querystring"));
   }
 
-  private Stream<Arguments> provideHttpHeaderLines() {
+  private static Stream<Arguments> provideHttpHeaderLines() {
     return Stream.of(
         Arguments.of("Content-Type: text/html\r\n", "Content-Type", "text/html"),
         Arguments.of("X-Header-Made-Up: this is the header value\r\n", "X-Header-Made-Up", "this is the header value"));
