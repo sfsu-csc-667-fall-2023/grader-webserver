@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +21,7 @@ public class RequestReaderTest {
 
   @ParameterizedTest
   @MethodSource("tests.dataProviders.RequestReaderTestProviders#provideValidHttpMethods")
-  public void testValidHttpMethods(HttpMethods expectedMethod, InputStream input) {
+  public void testValidHttpMethods(HttpMethods expectedMethod, InputStream input) throws BadRequestException {
     RequestReader reader = new RequestReader(input);
     HttpRequest request = reader.getRequest();
 
@@ -41,7 +42,7 @@ public class RequestReaderTest {
 
   @ParameterizedTest
   @MethodSource("tests.dataProviders.RequestReaderTestProviders#provideURIs")
-  public void testRequestReaderReadsURI(String expectedUri, InputStream input) {
+  public void testRequestReaderReadsURI(String expectedUri, InputStream input) throws BadRequestException {
     RequestReader reader = new RequestReader(input);
     HttpRequest request = reader.getRequest();
 
@@ -50,7 +51,8 @@ public class RequestReaderTest {
 
   @ParameterizedTest
   @MethodSource("tests.dataProviders.RequestReaderTestProviders#provideURIsWithQueryStrings")
-  public void testRequestReaderReadsQueryStringsFromURIs(String expectedQueryString, InputStream input) {
+  public void testRequestReaderReadsQueryStringsFromURIs(String expectedQueryString, InputStream input)
+      throws BadRequestException {
     RequestReader reader = new RequestReader(input);
     HttpRequest request = reader.getRequest();
 
@@ -58,9 +60,9 @@ public class RequestReaderTest {
   }
 
   @Test
-  public void testRequestReaderReadsHttpVersion() {
+  public void testRequestReaderReadsHttpVersion() throws BadRequestException {
     RequestReader reader = new RequestReader(
-        RequestReaderTestProviders.createTestStream("GET /index.html HTTP/1.1\r\n\r\n"));
+        RequestReaderTestProviders.createTestStream("GET /index.html HTTP/1.1\r\n\r\n".getBytes()));
     HttpRequest request = reader.getRequest();
 
     assertEquals("HTTP/1.1", request.getVersion());
@@ -68,7 +70,8 @@ public class RequestReaderTest {
 
   @ParameterizedTest
   @MethodSource("tests.dataProviders.RequestReaderTestProviders#getHeaders")
-  public void testRequestReaderReadsHeaders(String expectedHeaderName, String expectedHeaderValue, InputStream input) {
+  public void testRequestReaderReadsHeaders(String expectedHeaderName, String expectedHeaderValue, InputStream input)
+      throws BadRequestException {
     RequestReader reader = new RequestReader(input);
     HttpRequest request = reader.getRequest();
 
@@ -76,26 +79,17 @@ public class RequestReaderTest {
   }
 
   @Test
-  public void testRequestReaderReadsBody() {
+  public void testRequestReaderReadsBody() throws BadRequestException {
     byte[] expectedBody = new byte[] { 42, 3, 5, 10, 22, 38 };
     byte[] initialRequestContent = "GET / HTTP/1.1\r\nContent-Length: 6\r\n\r\n".getBytes();
 
-    byte[] requestContent = new byte[expectedBody.length + initialRequestContent.length];
-    for (int index = 0; index < initialRequestContent.length; index++) {
-      requestContent[index] = initialRequestContent[index];
-    }
-    for (int index = 0; index < expectedBody.length; index++) {
-      requestContent[index + initialRequestContent.length] = expectedBody[index];
-    }
+    ByteBuffer buffer = ByteBuffer.wrap(new byte[expectedBody.length + initialRequestContent.length]);
+    buffer.put(initialRequestContent);
+    buffer.put(expectedBody);
 
-    InputStream input = new InputStream() {
-      private int index = 0;
+    byte[] requestContent = buffer.array();
 
-      @Override
-      public int read() {
-        return requestContent[index++];
-      }
-    };
+    InputStream input = RequestReaderTestProviders.createTestStream(requestContent);
 
     RequestReader reader = new RequestReader(input);
     HttpRequest request = reader.getRequest();
@@ -112,9 +106,9 @@ public class RequestReaderTest {
   }
 
   @Test
-  public void testRequestReaderSetsNullForEmptyBody() {
+  public void testRequestReaderSetsNullForEmptyBody() throws BadRequestException {
     RequestReader reader = new RequestReader(
-        RequestReaderTestProviders.createTestStream("GET /index.html HTTP/1.1\r\n\r\n"));
+        RequestReaderTestProviders.createTestStream("GET /index.html HTTP/1.1\r\n\r\n".getBytes()));
     HttpRequest request = reader.getRequest();
 
     assertEquals(0, request.getBody().length);
