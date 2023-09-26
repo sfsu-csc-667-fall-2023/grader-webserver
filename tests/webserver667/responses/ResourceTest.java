@@ -1,5 +1,7 @@
 package tests.webserver667.responses;
 
+import org.junit.jupiter.api.Test;
+
 /**
  * Given a string (and document root?), is the correct path generated
  * - note test isProtected and isScript!
@@ -13,4 +15,8 @@ package tests.webserver667.responses;
  */
 public class ResourceTest {
 
+  @Test
+  public void testThing() {
+
+  }
 }
