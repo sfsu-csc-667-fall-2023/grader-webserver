@@ -8,8 +8,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import webserver667.responses.IResource;
+import webserver667.responses.authentication.UserAuthenticator;
 
 public class ResponseWriterTestProviders {
+  public static UserAuthenticator createUserAuthenticator(boolean isAuthenticated) {
+    return new UserAuthenticator(null, null) {
+      @Override
+      public boolean isAuthenticated() {
+        return isAuthenticated;
+      }
+    };
+  }
+
   public static OutputStream createTestOutputStream() {
     return new OutputStream() {
       StringBuffer buffer = new StringBuffer();
@@ -23,6 +33,55 @@ public class ResponseWriterTestProviders {
       public String toString() {
         return this.buffer.toString();
       }
+    };
+  }
+
+  public static IResource createTestResource(
+      boolean exists,
+      boolean isProtected,
+      boolean script,
+      Path path) {
+    return createTestResource(
+        exists,
+        isProtected,
+        script,
+        path,
+        createUserAuthenticator(true));
+  }
+
+  public static IResource createTestResource(
+      boolean exists,
+      boolean isProtected,
+      boolean script,
+      Path path,
+      UserAuthenticator authenticator) {
+    return new IResource() {
+
+      @Override
+      public boolean exists() {
+        return exists;
+      }
+
+      @Override
+      public Path getPath() {
+        return path;
+      }
+
+      @Override
+      public boolean isProtected() {
+        return isProtected;
+      }
+
+      @Override
+      public boolean isScript() {
+        return script;
+      }
+
+      @Override
+      public UserAuthenticator getUserAuthenticator() {
+        return authenticator;
+      }
+
     };
   }
 
@@ -61,6 +120,11 @@ public class ResponseWriterTestProviders {
       @Override
       public boolean isScript() {
         return false;
+      }
+
+      @Override
+      public UserAuthenticator getUserAuthenticator() {
+        return createUserAuthenticator(true);
       }
     };
   }

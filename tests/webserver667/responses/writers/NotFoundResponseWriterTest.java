@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import tests.dataProviders.ResponseWriterTestProviders;
 import webserver667.responses.IResource;
+import webserver667.responses.authentication.UserAuthenticator;
 import webserver667.responses.writers.NotFoundResponseWriter;
 import webserver667.responses.writers.ResponseWriter;
 
@@ -46,6 +47,11 @@ public class NotFoundResponseWriterTest {
       @Override
       public boolean isScript() {
         return false;
+      }
+
+      @Override
+      public UserAuthenticator getUserAuthenticator() {
+        return null;
       }
     };
 
