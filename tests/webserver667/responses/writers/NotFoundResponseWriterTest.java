@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
+import tests.dataProviders.ResponseWriterTestProviders;
 import webserver667.responses.IResource;
 import webserver667.responses.writers.NotFoundResponseWriter;
 import webserver667.responses.writers.ResponseWriter;
@@ -48,19 +49,12 @@ public class NotFoundResponseWriterTest {
       }
     };
 
-    StringBuffer stringBuffer = new StringBuffer();
-
-    OutputStream out = new OutputStream() {
-      @Override
-      public void write(int b) throws IOException {
-        stringBuffer.append((char) b);
-      }
-    };
+    OutputStream out = ResponseWriterTestProviders.createTestOutputStream();
 
     ResponseWriter writer = new NotFoundResponseWriter(out, testResource);
     writer.write();
 
-    String result = stringBuffer.toString();
+    String result = out.toString();
 
     assertTrue(result.startsWith("HTTP/1.1 404 Not Found\r\n"));
   }

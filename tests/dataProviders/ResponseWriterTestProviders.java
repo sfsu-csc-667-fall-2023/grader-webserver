@@ -3,12 +3,29 @@ package tests.dataProviders;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import webserver667.responses.IResource;
 
 public class ResponseWriterTestProviders {
+  public static OutputStream createTestOutputStream() {
+    return new OutputStream() {
+      StringBuffer buffer = new StringBuffer();
+
+      @Override
+      public void write(int b) throws IOException {
+        buffer.append((char) b);
+      }
+
+      @Override
+      public String toString() {
+        return this.buffer.toString();
+      }
+    };
+  }
+
   public static IResource createTestResource(String fileContent) {
     return new IResource() {
       File file;

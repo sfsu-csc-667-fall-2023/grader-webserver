@@ -9,25 +9,22 @@ import org.junit.jupiter.api.Test;
 
 import tests.dataProviders.ResponseWriterTestProviders;
 import webserver667.responses.IResource;
-import webserver667.responses.writers.FileResponseWriter;
+import webserver667.responses.writers.CreatedResponseWriter;
 import webserver667.responses.writers.ResponseWriter;
 
-public class FileResponseWriterTest {
+public class BadRequestResponseWriterTest {
+
   @Test
   public void testWrite() throws IOException {
-    String fileContent = "content";
-    IResource testResource = ResponseWriterTestProviders.createTestResource(fileContent);
-
+    IResource testResource = ResponseWriterTestProviders.createTestResource("");
     OutputStream out = ResponseWriterTestProviders.createTestOutputStream();
 
-    ResponseWriter writer = new FileResponseWriter(out, testResource);
+    ResponseWriter writer = new CreatedResponseWriter(out, testResource);
     writer.write();
 
     String result = out.toString();
 
-    assertTrue(result.startsWith("HTTP/1.1 200 OK\r\n"));
-    assertTrue(result.contains("Content-Type: text/html\r\n"));
-    assertTrue(result.contains("Content-Length: 7\r\n"));
-    assertTrue(result.endsWith(fileContent));
+    assertTrue(result.startsWith("HTTP/1.1 400 Bad Request\r\n"));
   }
+
 }
