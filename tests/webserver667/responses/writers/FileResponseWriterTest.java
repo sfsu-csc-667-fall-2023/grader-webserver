@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import tests.dataProviders.ResponseWriterTestProviders;
 import webserver667.responses.IResource;
+import webserver667.responses.writers.FileResponseWriter;
 import webserver667.responses.writers.ResponseWriter;
 
 public class FileResponseWriterTest {
@@ -25,12 +26,12 @@ public class FileResponseWriterTest {
       }
     };
 
-    ResponseWriter writer = new ResponseWriter(out, testResource);
+    ResponseWriter writer = new FileResponseWriter(out, testResource);
     writer.write();
 
     String result = stringBuffer.toString();
 
-    assertTrue(result.startsWith("HTTP/1.1 200 Ok\r\n"));
+    assertTrue(result.startsWith("HTTP/1.1 200 OK\r\n"));
     assertTrue(result.contains("Content-Type: text/html\r\n"));
     assertTrue(result.contains("Content-Length: 7\r\n"));
     assertTrue(result.endsWith(fileContent));
