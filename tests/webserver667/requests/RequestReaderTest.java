@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import tests.dataProviders.RequestReaderTestProviders;
 import webserver667.exceptions.BadRequestException;
+import webserver667.exceptions.MethodNotAllowedException;
 import webserver667.requests.HttpMethods;
 import webserver667.requests.HttpRequest;
 import webserver667.requests.RequestReader;
@@ -34,7 +35,7 @@ public class RequestReaderTest {
     RequestReader reader = new RequestReader(input);
 
     assertThrows(
-        BadRequestException.class,
+        MethodNotAllowedException.class,
         () -> {
           reader.getRequest();
         });

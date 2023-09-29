@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 // + RequestHandler(socket: Socket): RequestHandler
 
-public class RequestHandlerTest {
+public class _RequestHandlerTest {
   // private static Path createDocumentRoot(Path path) throws IOException {
   // Path documentRoot = Files.createTempDirectory("documentRoot");
 
