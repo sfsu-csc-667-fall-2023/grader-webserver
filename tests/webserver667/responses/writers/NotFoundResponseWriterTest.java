@@ -11,10 +11,9 @@ import tests.dataProviders.ResponseWriterTestProviders;
 import webserver667.responses.IResource;
 import webserver667.responses.writers.ResponseWriter;
 
-public class FileResponseWriterTest {
+public class NotFoundResponseWriterTest {
   @Test
   public void testWrite() throws IOException {
-    String fileContent = "content";
     IResource testResource = ResponseWriterTestProviders.createTestResource(fileContent);
     StringBuffer stringBuffer = new StringBuffer();
 
