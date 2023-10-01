@@ -29,9 +29,11 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    Resource resource = new Resource("/doesnt/matter/index.html", documentRoot.toString());
-    Files.createTempFile(
-        Paths.get(documentRoot.toString(), resourcePath.toString()), "index", "html");
+    Path temporaryFile = Files.createTempFile(
+        Paths.get(documentRoot.toString(), resourcePath.toString()), "index", ".html");
+    Resource resource = new Resource(
+        String.format("/doesnt/matter/%s", temporaryFile.getFileName()),
+        documentRoot.toString());
 
     assertTrue(resource.exists());
   }
