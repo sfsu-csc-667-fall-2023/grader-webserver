@@ -96,6 +96,6 @@ public class ResourceTest {
 
     Resource resource = new Resource("/doesnt/matter/index.html", documentRoot.toString());
 
-    assertTrue(resource.isScript());
+    assertFalse(resource.isScript());
   }
 }
