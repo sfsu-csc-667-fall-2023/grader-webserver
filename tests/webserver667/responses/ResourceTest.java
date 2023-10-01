@@ -66,7 +66,7 @@ public class ResourceTest {
 
     Resource resource = new Resource("/doesnt/matter/index.html", documentRoot.toString());
     Files.createTempFile(
-        Paths.get(documentRoot.toString(), resourcePath.toString()), null, "passwords");
+        Paths.get(documentRoot.toString(), resourcePath.toString()), null, ".passwords");
 
     assertTrue(resource.isProtected());
   }
