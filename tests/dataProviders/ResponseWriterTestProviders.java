@@ -85,6 +85,58 @@ public class ResponseWriterTestProviders {
     };
   }
 
+  public static IResource createScriptResource() {
+    return new IResource() {
+      File file;
+
+      @Override
+      public boolean exists() {
+        return true;
+      }
+
+      @Override
+      public Path getPath() {
+        if (file == null) {
+          String content = String.join("\n",
+              "#!/opt/homebrew/bin/node",
+              "const content = `Hello world!`",
+              "process.stdout.write('Content-Type: text/html\r\n');",
+              "process.stdout.write(`Content-Length: ${content.length}`);",
+              "process.stdout.write('\r\n');",
+              "process.stdout.write(content);");
+
+          try {
+            this.file = File.createTempFile("script", ".js");
+            FileWriter writer = new FileWriter(file);
+            writer.write(content);
+            writer.flush();
+            writer.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+
+        return file.toPath();
+      }
+
+      @Override
+      public boolean isProtected() {
+        return false;
+      }
+
+      @Override
+      public boolean isScript() {
+        return true;
+      }
+
+      @Override
+      public UserAuthenticator getUserAuthenticator() {
+        return createUserAuthenticator(true);
+      }
+
+    };
+  }
+
   public static IResource createTestResource(
       String fileContent, String filename, String fileExtension) {
     return new IResource() {
