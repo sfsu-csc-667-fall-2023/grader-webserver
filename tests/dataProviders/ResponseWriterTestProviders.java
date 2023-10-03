@@ -98,7 +98,7 @@ public class ResponseWriterTestProviders {
       public Path getPath() {
         if (this.file == null) {
           try {
-            Path path = Files.createTempFile(null, "index", "html");
+            Path path = Files.createTempFile("index", "html");
             this.file = path.toFile();
 
             FileWriter writer = new FileWriter(this.file);
