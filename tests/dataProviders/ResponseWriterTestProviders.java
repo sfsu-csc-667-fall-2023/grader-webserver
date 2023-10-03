@@ -85,7 +85,8 @@ public class ResponseWriterTestProviders {
     };
   }
 
-  public static IResource createTestResource(String fileContent) {
+  public static IResource createTestResource(
+      String fileContent, String filename, String fileExtension) {
     return new IResource() {
       File file;
 
@@ -98,7 +99,7 @@ public class ResponseWriterTestProviders {
       public Path getPath() {
         if (this.file == null) {
           try {
-            Path path = Files.createTempFile("index", "html");
+            Path path = Files.createTempFile(filename, fileExtension);
             this.file = path.toFile();
 
             FileWriter writer = new FileWriter(this.file);
@@ -129,4 +130,7 @@ public class ResponseWriterTestProviders {
     };
   }
 
+  public static IResource createTestResource(String fileContent) {
+    return createTestResource(fileContent, "index", ".html");
+  }
 }
