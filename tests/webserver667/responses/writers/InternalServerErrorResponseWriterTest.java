@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import tests.dataProviders.ResponseWriterTestProviders;
 import webserver667.responses.IResource;
-import webserver667.responses.writers.InterServerErrorResponseWriter;
+import webserver667.responses.writers.InternalServerErrorResponseWriter;
 import webserver667.responses.writers.ResponseWriter;
 
 public class InternalServerErrorResponseWriterTest {
@@ -19,7 +19,7 @@ public class InternalServerErrorResponseWriterTest {
     IResource testResource = ResponseWriterTestProviders.createTestResource("");
     OutputStream out = ResponseWriterTestProviders.createTestOutputStream();
 
-    ResponseWriter writer = new InterServerErrorResponseWriter(out, testResource);
+    ResponseWriter writer = new InternalServerErrorResponseWriter(out, testResource);
     writer.write();
 
     String result = out.toString();
