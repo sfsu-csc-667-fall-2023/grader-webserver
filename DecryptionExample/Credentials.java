@@ -1,4 +1,4 @@
-package sample_files;
+package DecryptionExample;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
