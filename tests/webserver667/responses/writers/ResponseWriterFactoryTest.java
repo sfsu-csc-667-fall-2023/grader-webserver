@@ -38,7 +38,7 @@ public class ResponseWriterFactoryTest {
   @Test
   public void testForbidden() {
     HttpRequest request = new HttpRequest();
-    request.addHeader("Authentication: jkasgkjasdkjhksjadhkjasdhkj");
+    request.addHeader("Authorization: jkasgkjasdkjhksjadhkjasdhkj");
 
     ResponseWriter writer = ResponseWriterFactory.create(
         createTestOutputStream(),
