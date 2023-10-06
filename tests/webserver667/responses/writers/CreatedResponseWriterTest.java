@@ -24,6 +24,6 @@ public class CreatedResponseWriterTest {
 
     String result = out.toString();
 
-    assertTrue(result.startsWith("HTTP/1.1 204 No Content\r\n"));
+    assertTrue(result.startsWith("HTTP/1.1 201 Created\r\n"));
   }
 }

@@ -18,7 +18,7 @@ public class UserAuthenticatorTest {
     request.addHeader("Authorization: Basic anJvYjpwYXNzd29yZA==");
 
     IResource resource = createTestResource(
-        "jrob:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=", "", ".passwords");
+        "jrob:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=", "", ".passwords", "");
 
     UserAuthenticator authenticator = new UserPasswordAuthenticator(
         request, resource);
@@ -32,7 +32,7 @@ public class UserAuthenticatorTest {
     request.addHeader("Authorization: Basic anJvYjpub3RhcGFzc3dvcmQ=");
 
     IResource resource = createTestResource(
-        "jrob:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=", "", ".passwords");
+        "jrob:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=", "", ".passwords", "");
 
     UserAuthenticator authenticator = new UserPasswordAuthenticator(
         request, resource);

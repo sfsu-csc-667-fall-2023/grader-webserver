@@ -7,22 +7,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
-import webserver667.requests.HttpMethods;
-import webserver667.requests.HttpRequest;
-import webserver667.responses.writers.CreatedResponseWriter;
-import webserver667.responses.writers.ForbiddenResponseWriter;
-import webserver667.responses.writers.NoContentResponseWriter;
-import webserver667.responses.writers.NotFoundResponseWriter;
-import webserver667.responses.writers.NotModifiedResponseWriter;
-import webserver667.responses.writers.OkResponseWriter;
-import webserver667.responses.writers.ResponseWriter;
-import webserver667.responses.writers.ResponseWriterFactory;
-import webserver667.responses.writers.ScriptResponseWriter;
-import webserver667.responses.writers.UnauthorizedResponseWriter;
+import webserver667.requests.*;
+import webserver667.responses.writers.*;
 
 import static tests.dataProviders.ResponseWriterTestProviders.*;
 
@@ -35,7 +25,11 @@ public class ResponseWriterFactoryTest {
 
     ResponseWriter writer = ResponseWriterFactory.create(
         createTestOutputStream(),
-        createTestResource(false, false, false, Paths.get(System.getProperty("java.io.tmpdir"))),
+        createTestResource(false,
+            false,
+            false,
+            Paths.get(System.getProperty("java.io.tmpdir")),
+            "text/html"),
         request);
 
     assertInstanceOf(CreatedResponseWriter.class, writer);
@@ -51,7 +45,8 @@ public class ResponseWriterFactoryTest {
         createTestResource(
             false, true, false,
             Paths.get(System.getProperty("java.io.tmpdir")),
-            createUserAuthenticator(false)),
+            createUserAuthenticator(false),
+            "index/html"),
         request);
 
     assertInstanceOf(ForbiddenResponseWriter.class, writer);
@@ -66,7 +61,8 @@ public class ResponseWriterFactoryTest {
         createTestOutputStream(),
         createTestResource(
             true, false, false,
-            Files.createTempFile("doesnt", "matter")),
+            Files.createTempFile("doesnt", "matter"),
+            "index/html"),
         request);
 
     assertInstanceOf(NoContentResponseWriter.class, writer);
@@ -77,7 +73,8 @@ public class ResponseWriterFactoryTest {
     ResponseWriter writer = ResponseWriterFactory.create(
         createTestOutputStream(),
         createTestResource(false, false, false,
-            Paths.get(System.getProperty("java.io.tmpdir"))),
+            Paths.get(System.getProperty("java.io.tmpdir")),
+            "text/html"),
         new HttpRequest());
 
     assertInstanceOf(NotFoundResponseWriter.class, writer);
@@ -87,7 +84,11 @@ public class ResponseWriterFactoryTest {
   public void testNotModified() throws IOException {
     SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd MMM yyyy hh:mm:ss");
     File file = Files.createTempFile("dont", "care").toFile();
-    String afterDate = dateFormat.format(LocalDate.now().plusDays(5)) + " GMT";
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+    }
+    String afterDate = dateFormat.format(new Date()) + " GMT";
 
     HttpRequest request = new HttpRequest();
     request.setHttpMethod(HttpMethods.GET);
@@ -95,7 +96,7 @@ public class ResponseWriterFactoryTest {
 
     ResponseWriter writer = ResponseWriterFactory.create(
         createTestOutputStream(),
-        createTestResource(true, false, false, file.toPath()),
+        createTestResource(true, false, false, file.toPath(), "text/html"),
         request);
 
     assertInstanceOf(NotModifiedResponseWriter.class, writer);
@@ -107,7 +108,8 @@ public class ResponseWriterFactoryTest {
         createTestOutputStream(),
         createTestResource(
             true, false, false,
-            Paths.get(System.getProperty("java.io.tmpdir"))),
+            Paths.get(System.getProperty("java.io.tmpdir")),
+            "text/html"),
         new HttpRequest());
 
     assertInstanceOf(OkResponseWriter.class, writer);
@@ -120,7 +122,8 @@ public class ResponseWriterFactoryTest {
         createTestOutputStream(),
         createTestResource(
             false, true, true,
-            Paths.get(System.getProperty("java.io.tmpdir"))),
+            Paths.get(System.getProperty("java.io.tmpdir")),
+            "text/html"),
         new HttpRequest());
 
     assertInstanceOf(UnauthorizedResponseWriter.class, writer);
@@ -135,7 +138,8 @@ public class ResponseWriterFactoryTest {
         createTestOutputStream(),
         createTestResource(
             true, false, true,
-            Paths.get(System.getProperty("java.io.tmpdir"))),
+            Paths.get(System.getProperty("java.io.tmpdir")),
+            "text/html"),
         request);
 
     assertInstanceOf(ScriptResponseWriter.class, writer);

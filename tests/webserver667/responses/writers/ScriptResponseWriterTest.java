@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import tests.dataProviders.ResponseWriterTestProviders;
 import webserver667.responses.IResource;
-import webserver667.responses.writers.OkResponseWriter;
 import webserver667.responses.writers.ResponseWriter;
+import webserver667.responses.writers.ScriptResponseWriter;
 
 public class ScriptResponseWriterTest {
   @Test
@@ -19,7 +19,7 @@ public class ScriptResponseWriterTest {
 
     OutputStream out = ResponseWriterTestProviders.createTestOutputStream();
 
-    ResponseWriter writer = new OkResponseWriter(out, testResource);
+    ResponseWriter writer = new ScriptResponseWriter(out, testResource);
     writer.write();
 
     String result = out.toString();

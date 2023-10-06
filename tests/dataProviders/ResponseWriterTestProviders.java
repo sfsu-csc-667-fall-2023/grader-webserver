@@ -40,13 +40,15 @@ public class ResponseWriterTestProviders {
       boolean exists,
       boolean isProtected,
       boolean script,
-      Path path) {
+      Path path,
+      String mimeType) {
     return createTestResource(
         exists,
         isProtected,
         script,
         path,
-        createUserAuthenticator(true));
+        createUserAuthenticator(true),
+        mimeType);
   }
 
   public static IResource createTestResource(
@@ -54,7 +56,8 @@ public class ResponseWriterTestProviders {
       boolean isProtected,
       boolean script,
       Path path,
-      UserAuthenticator authenticator) {
+      UserAuthenticator authenticator,
+      String mimeType) {
     return new IResource() {
 
       @Override
@@ -80,6 +83,11 @@ public class ResponseWriterTestProviders {
       @Override
       public UserAuthenticator getUserAuthenticator() {
         return authenticator;
+      }
+
+      @Override
+      public String getMimeType() {
+        return mimeType;
       }
 
     };
@@ -134,11 +142,16 @@ public class ResponseWriterTestProviders {
         return createUserAuthenticator(true);
       }
 
+      @Override
+      public String getMimeType() {
+        return "text/html";
+      }
+
     };
   }
 
   public static IResource createTestResource(
-      String fileContent, String filename, String fileExtension) {
+      String fileContent, String filename, String fileExtension, String mimeType) {
     return new IResource() {
       File file;
 
@@ -179,10 +192,15 @@ public class ResponseWriterTestProviders {
       public UserAuthenticator getUserAuthenticator() {
         return createUserAuthenticator(true);
       }
+
+      @Override
+      public String getMimeType() {
+        return mimeType;
+      }
     };
   }
 
   public static IResource createTestResource(String fileContent) {
-    return createTestResource(fileContent, "index", ".html");
+    return createTestResource(fileContent, "index", ".html", "index/html");
   }
 }

@@ -53,6 +53,11 @@ public class NotFoundResponseWriterTest {
       public UserAuthenticator getUserAuthenticator() {
         return null;
       }
+
+      @Override
+      public String getMimeType() {
+        return "";
+      }
     };
 
     OutputStream out = ResponseWriterTestProviders.createTestOutputStream();
