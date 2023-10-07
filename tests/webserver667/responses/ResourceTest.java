@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +13,7 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
+import webserver667.responses.IResource;
 import webserver667.responses.Resource;
 
 public class ResourceTest {
@@ -31,8 +34,9 @@ public class ResourceTest {
 
     Path temporaryFile = Files.createTempFile(
         Paths.get(documentRoot.toString(), resourcePath.toString()), "index", ".html");
-    Resource resource = new Resource(
+    IResource resource = new Resource(
         String.format("/doesnt/matter/%s", temporaryFile.getFileName()),
+        null,
         documentRoot.toString());
 
     assertTrue(resource.exists());
@@ -43,7 +47,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    Resource resource = new Resource("/doesnt/matter/index.html", documentRoot.toString());
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
 
     assertFalse(resource.exists());
   }
@@ -53,7 +57,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter", "index.html");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    Resource resource = new Resource("/doesnt/matter/index.html", documentRoot.toString());
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
     Path expectedPath = Paths.get(documentRoot.toString(), resourcePath.toString());
 
     assertEquals(expectedPath, resource.getPath());
@@ -64,9 +68,15 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    Resource resource = new Resource("/doesnt/matter/index.html", documentRoot.toString());
-    Files.createTempFile(
-        Paths.get(documentRoot.toString(), resourcePath.toString()), null, ".passwords");
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
+
+    File passwords = new File(
+        Paths.get(documentRoot.toString(), resourcePath.toString(), ".passwords").toAbsolutePath().toString());
+
+    FileWriter writer = new FileWriter(passwords);
+    writer.write("somecontent");
+    writer.flush();
+    writer.close();
 
     assertTrue(resource.isProtected());
   }
@@ -76,7 +86,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    Resource resource = new Resource("/doesnt/matter/index.html", documentRoot.toString());
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
 
     assertFalse(resource.isProtected());
   }
@@ -86,7 +96,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "scripts");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    Resource resource = new Resource("/doesnt/scripts/index.html", documentRoot.toString());
+    IResource resource = new Resource("/doesnt/scripts/index.html", null, documentRoot.toString());
 
     assertTrue(resource.isScript());
   }
@@ -96,7 +106,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    Resource resource = new Resource("/doesnt/matter/index.html", documentRoot.toString());
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
 
     assertFalse(resource.isScript());
   }

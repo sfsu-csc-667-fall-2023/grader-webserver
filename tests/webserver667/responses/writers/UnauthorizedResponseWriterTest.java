@@ -7,8 +7,10 @@ import java.io.OutputStream;
 
 import org.junit.jupiter.api.Test;
 
-import tests.dataProviders.ResponseWriterTestProviders;
-import webserver667.responses.IResource;
+import tests.helpers.responses.TestOutputStream;
+import tests.helpers.responses.TestResource;
+import webserver667.requests.HttpMethods;
+import webserver667.requests.HttpRequest;
 import webserver667.responses.writers.UnauthorizedResponseWriter;
 import webserver667.responses.writers.ResponseWriter;
 
@@ -16,10 +18,15 @@ public class UnauthorizedResponseWriterTest {
 
   @Test
   public void testWrite() throws IOException {
-    IResource testResource = ResponseWriterTestProviders.createTestResource("");
-    OutputStream out = ResponseWriterTestProviders.createTestOutputStream();
+    TestResource testResource = new TestResource();
+    testResource.setIsProtected(true);
 
-    ResponseWriter writer = new UnauthorizedResponseWriter(out, testResource);
+    OutputStream out = new TestOutputStream();
+
+    HttpRequest request = new HttpRequest();
+    request.setHttpMethod(HttpMethods.GET);
+
+    ResponseWriter writer = new UnauthorizedResponseWriter(out, testResource, request);
     writer.write();
 
     String result = out.toString();

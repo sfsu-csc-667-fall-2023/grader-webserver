@@ -85,6 +85,7 @@ public class HttpRequestTest {
     byte[] bytes = new byte[size];
 
     HttpRequest request = new HttpRequest();
+    request.addHeader("Content-Length: 142");
     request.setBody(bytes);
 
     assertTrue(request.hasBody());

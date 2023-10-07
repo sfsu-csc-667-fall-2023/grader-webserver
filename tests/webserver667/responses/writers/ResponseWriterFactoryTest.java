@@ -5,48 +5,48 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
+import tests.helpers.responses.TestOutputStream;
+import tests.helpers.responses.TestResource;
+import tests.helpers.responses.TestUserAuthenticator;
 import webserver667.requests.*;
 import webserver667.responses.writers.*;
-
-import static tests.dataProviders.ResponseWriterTestProviders.*;
 
 public class ResponseWriterFactoryTest {
 
   @Test
-  public void testCreated() {
+  public void testCreated() throws IOException {
     HttpRequest request = new HttpRequest();
     request.setHttpMethod(HttpMethods.PUT);
 
+    TestResource testResource = new TestResource();
+    testResource.setExists(false);
+
     ResponseWriter writer = ResponseWriterFactory.create(
-        createTestOutputStream(),
-        createTestResource(false,
-            false,
-            false,
-            Paths.get(System.getProperty("java.io.tmpdir")),
-            "text/html"),
+        new TestOutputStream(),
+        testResource,
         request);
 
     assertInstanceOf(CreatedResponseWriter.class, writer);
   }
 
   @Test
-  public void testForbidden() {
+  public void testForbidden() throws IOException {
     HttpRequest request = new HttpRequest();
     request.addHeader("Authorization: jkasgkjasdkjhksjadhkjasdhkj");
 
+    TestResource testResource = new TestResource();
+    testResource.setExists(false);
+    testResource.setIsProtected(true);
+    testResource.setUserAuthenticator(new TestUserAuthenticator(false));
+
     ResponseWriter writer = ResponseWriterFactory.create(
-        createTestOutputStream(),
-        createTestResource(
-            false, true, false,
-            Paths.get(System.getProperty("java.io.tmpdir")),
-            createUserAuthenticator(false),
-            "index/html"),
+        new TestOutputStream(),
+        testResource,
         request);
 
     assertInstanceOf(ForbiddenResponseWriter.class, writer);
@@ -57,25 +57,30 @@ public class ResponseWriterFactoryTest {
     HttpRequest request = new HttpRequest();
     request.setHttpMethod(HttpMethods.DELETE);
 
+    TestResource testResource = new TestResource();
+    testResource.setExists(false);
+    testResource.setPath(Files.createTempFile("doesnt", "matter"));
+
     ResponseWriter writer = ResponseWriterFactory.create(
-        createTestOutputStream(),
-        createTestResource(
-            true, false, false,
-            Files.createTempFile("doesnt", "matter"),
-            "index/html"),
+        new TestOutputStream(),
+        testResource,
         request);
 
     assertInstanceOf(NoContentResponseWriter.class, writer);
   }
 
   @Test
-  public void testNotFound() {
+  public void testNotFound() throws IOException {
+    HttpRequest request = new HttpRequest();
+    request.setHttpMethod(HttpMethods.GET);
+
+    TestResource testResource = new TestResource();
+    testResource.setExists(false);
+
     ResponseWriter writer = ResponseWriterFactory.create(
-        createTestOutputStream(),
-        createTestResource(false, false, false,
-            Paths.get(System.getProperty("java.io.tmpdir")),
-            "text/html"),
-        new HttpRequest());
+        new TestOutputStream(),
+        testResource,
+        request);
 
     assertInstanceOf(NotFoundResponseWriter.class, writer);
   }
@@ -94,52 +99,57 @@ public class ResponseWriterFactoryTest {
     request.setHttpMethod(HttpMethods.GET);
     request.addHeader(String.format("If-Modified-Since: %s", afterDate));
 
+    TestResource resource = new TestResource();
+    resource.setPath(file.toPath());
+
     ResponseWriter writer = ResponseWriterFactory.create(
-        createTestOutputStream(),
-        createTestResource(true, false, false, file.toPath(), "text/html"),
+        new TestOutputStream(),
+        resource,
         request);
 
     assertInstanceOf(NotModifiedResponseWriter.class, writer);
   }
 
   @Test
-  public void testOk() {
+  public void testOk() throws IOException {
+    HttpRequest request = new HttpRequest();
+    request.setHttpMethod(HttpMethods.GET);
+
+    TestResource resource = new TestResource();
+
     ResponseWriter writer = ResponseWriterFactory.create(
-        createTestOutputStream(),
-        createTestResource(
-            true, false, false,
-            Paths.get(System.getProperty("java.io.tmpdir")),
-            "text/html"),
-        new HttpRequest());
+        new TestOutputStream(), resource, request);
 
     assertInstanceOf(OkResponseWriter.class, writer);
   }
 
   @Test
-  public void testUnauthorized() {
-    // We need resource where isProtected returns true
+  public void testUnauthorized() throws IOException {
+    TestResource resource = new TestResource();
+    resource.setExists(false);
+    resource.setIsProtected(true);
+    resource.setIsScript(true);
+    resource.setUserAuthenticator(new TestUserAuthenticator(false));
+
     ResponseWriter writer = ResponseWriterFactory.create(
-        createTestOutputStream(),
-        createTestResource(
-            false, true, true,
-            Paths.get(System.getProperty("java.io.tmpdir")),
-            "text/html"),
+        new TestOutputStream(),
+        resource,
         new HttpRequest());
 
     assertInstanceOf(UnauthorizedResponseWriter.class, writer);
   }
 
   @Test
-  public void testScriptResponseWriter() {
+  public void testScriptResponseWriter() throws IOException {
+    TestResource resource = new TestResource();
+    resource.setIsScript(true);
+
     HttpRequest request = new HttpRequest();
     request.setHttpMethod(HttpMethods.POST);
 
     ResponseWriter writer = ResponseWriterFactory.create(
-        createTestOutputStream(),
-        createTestResource(
-            true, false, true,
-            Paths.get(System.getProperty("java.io.tmpdir")),
-            "text/html"),
+        new TestOutputStream(),
+        resource,
         request);
 
     assertInstanceOf(ScriptResponseWriter.class, writer);

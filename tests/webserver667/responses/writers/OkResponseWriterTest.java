@@ -7,8 +7,9 @@ import java.io.OutputStream;
 
 import org.junit.jupiter.api.Test;
 
-import tests.dataProviders.ResponseWriterTestProviders;
-import webserver667.responses.IResource;
+import tests.helpers.responses.TestOutputStream;
+import tests.helpers.responses.TestResource;
+import webserver667.requests.HttpRequest;
 import webserver667.responses.writers.OkResponseWriter;
 import webserver667.responses.writers.ResponseWriter;
 
@@ -16,11 +17,13 @@ public class OkResponseWriterTest {
   @Test
   public void testWrite() throws IOException {
     String fileContent = "content";
-    IResource testResource = ResponseWriterTestProviders.createTestResource(fileContent);
 
-    OutputStream out = ResponseWriterTestProviders.createTestOutputStream();
+    TestResource testResource = new TestResource();
+    testResource.setPath(
+        TestResource.createTempResourceFile("fileContent", "fileContent", fileContent));
+    OutputStream out = new TestOutputStream();
 
-    ResponseWriter writer = new OkResponseWriter(out, testResource);
+    ResponseWriter writer = new OkResponseWriter(out, testResource, new HttpRequest());
     writer.write();
 
     String result = out.toString();

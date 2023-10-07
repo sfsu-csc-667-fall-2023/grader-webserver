@@ -7,7 +7,9 @@ import java.io.OutputStream;
 
 import org.junit.jupiter.api.Test;
 
-import tests.dataProviders.ResponseWriterTestProviders;
+import tests.helpers.responses.TestOutputStream;
+import tests.helpers.responses.TestResource;
+import webserver667.requests.HttpRequest;
 import webserver667.responses.IResource;
 import webserver667.responses.writers.InternalServerErrorResponseWriter;
 import webserver667.responses.writers.ResponseWriter;
@@ -16,10 +18,10 @@ public class InternalServerErrorResponseWriterTest {
 
   @Test
   public void testWrite() throws IOException {
-    IResource testResource = ResponseWriterTestProviders.createTestResource("");
-    OutputStream out = ResponseWriterTestProviders.createTestOutputStream();
+    IResource testResource = new TestResource();
+    OutputStream out = new TestOutputStream();
 
-    ResponseWriter writer = new InternalServerErrorResponseWriter(out, testResource);
+    ResponseWriter writer = new InternalServerErrorResponseWriter(out, testResource, new HttpRequest());
     writer.write();
 
     String result = out.toString();
