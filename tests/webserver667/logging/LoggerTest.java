@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Paths;
 
+import org.junit.jupiter.api.Test;
+
 import tests.dataProviders.ResponseWriterTestProviders;
 import webserver667.logging.Logger;
 import webserver667.requests.HttpMethods;
@@ -12,6 +14,7 @@ import webserver667.responses.IResource;
 
 public class LoggerTest {
 
+  @Test
   public void testGetLogString() {
 
     String testIp = "127.0.0.1";
