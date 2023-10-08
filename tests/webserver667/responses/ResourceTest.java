@@ -13,10 +13,15 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
+import webserver667.configuration.MimeTypes;
 import webserver667.responses.IResource;
 import webserver667.responses.Resource;
 
 public class ResourceTest {
+  private MimeTypes getMimeTypes() {
+    return new MimeTypes("html index/html" + System.lineSeparator());
+  }
+
   private static Path createDocumentRoot(Path path) throws IOException {
     Path documentRoot = Files.createTempDirectory("documentRoot");
 
@@ -37,7 +42,8 @@ public class ResourceTest {
     IResource resource = new Resource(
         String.format("/doesnt/matter/%s", temporaryFile.getFileName()),
         null,
-        documentRoot.toString());
+        documentRoot.toString(),
+        getMimeTypes());
 
     assertTrue(resource.exists());
   }
@@ -47,7 +53,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString(), getMimeTypes());
 
     assertFalse(resource.exists());
   }
@@ -57,7 +63,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter", "index.html");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString(), getMimeTypes());
     Path expectedPath = Paths.get(documentRoot.toString(), resourcePath.toString());
 
     assertEquals(expectedPath, resource.getPath());
@@ -68,7 +74,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString(), getMimeTypes());
 
     File passwords = new File(
         Paths.get(documentRoot.toString(), resourcePath.toString(), ".passwords").toAbsolutePath().toString());
@@ -86,7 +92,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString(), getMimeTypes());
 
     assertFalse(resource.isProtected());
   }
@@ -96,7 +102,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "scripts");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    IResource resource = new Resource("/doesnt/scripts/index.html", null, documentRoot.toString());
+    IResource resource = new Resource("/doesnt/scripts/index.html", null, documentRoot.toString(), getMimeTypes());
 
     assertTrue(resource.isScript());
   }
@@ -106,7 +112,7 @@ public class ResourceTest {
     Path resourcePath = Paths.get("doesnt", "matter");
     Path documentRoot = createDocumentRoot(resourcePath);
 
-    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString());
+    IResource resource = new Resource("/doesnt/matter/index.html", null, documentRoot.toString(), getMimeTypes());
 
     assertFalse(resource.isScript());
   }

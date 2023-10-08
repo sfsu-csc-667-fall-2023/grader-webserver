@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import tests.dataProviders.RequestReaderTestProviders;
+import tests.helpers.requests.TestInputStream;
 import webserver667.exceptions.BadRequestException;
 import webserver667.exceptions.MethodNotAllowedException;
 import webserver667.requests.HttpMethods;
@@ -20,8 +20,18 @@ import webserver667.requests.RequestReader;
 
 public class RequestReaderTest {
 
+  @Test
+  public void testBadRequest() {
+    RequestReader reader = new RequestReader(
+        new TestInputStream("GET /\r\n\r\n".getBytes()));
+
+    assertThrows(BadRequestException.class, () -> {
+      reader.getRequest();
+    });
+  }
+
   @ParameterizedTest
-  @MethodSource("tests.dataProviders.RequestReaderTestProviders#provideValidHttpMethods")
+  @MethodSource("tests.helpers.requests.TestProviders#provideValidHttpMethods")
   public void testValidHttpMethods(HttpMethods expectedMethod, InputStream input)
       throws BadRequestException, MethodNotAllowedException {
     RequestReader reader = new RequestReader(input);
@@ -31,7 +41,7 @@ public class RequestReaderTest {
   }
 
   @ParameterizedTest
-  @MethodSource("tests.dataProviders.RequestReaderTestProviders#provideInvalidHttpMethods")
+  @MethodSource("tests.helpers.requests.TestProviders#provideInvalidHttpMethods")
   public void testInvalidHttpMethods(InputStream input) {
     RequestReader reader = new RequestReader(input);
 
@@ -43,7 +53,7 @@ public class RequestReaderTest {
   }
 
   @ParameterizedTest
-  @MethodSource("tests.dataProviders.RequestReaderTestProviders#provideURIs")
+  @MethodSource("tests.helpers.requests.TestProviders#provideURIs")
   public void testRequestReaderReadsURI(String expectedUri, InputStream input)
       throws BadRequestException, MethodNotAllowedException {
     RequestReader reader = new RequestReader(input);
@@ -52,14 +62,8 @@ public class RequestReaderTest {
     assertEquals(expectedUri, request.getURI());
   }
 
-  /**
-   * @param expectedQueryString
-   * @param input
-   * @throws BadRequestException
-   * @throws MethodNotAllowedException
-   */
   @ParameterizedTest
-  @MethodSource("tests.dataProviders.RequestReaderTestProviders#provideURIsWithQueryStrings")
+  @MethodSource("tests.helpers.requests.TestProviders#provideURIsWithQueryStrings")
   public void testRequestReaderReadsQueryStringsFromURIs(String expectedQueryString, InputStream input)
       throws BadRequestException, MethodNotAllowedException {
     RequestReader reader = new RequestReader(input);
@@ -70,15 +74,14 @@ public class RequestReaderTest {
 
   @Test
   public void testRequestReaderReadsHttpVersion() throws BadRequestException, MethodNotAllowedException {
-    RequestReader reader = new RequestReader(
-        RequestReaderTestProviders.createTestStream("GET /index.html HTTP/1.1\r\n\r\n".getBytes()));
+    RequestReader reader = new RequestReader(new TestInputStream("GET /index.html HTTP/1.1\r\n\r\n".getBytes()));
     HttpRequest request = reader.getRequest();
 
     assertEquals("HTTP/1.1", request.getVersion());
   }
 
   @ParameterizedTest
-  @MethodSource("tests.dataProviders.RequestReaderTestProviders#getHeaders")
+  @MethodSource("tests.helpers.requests.TestProviders#getHeaders")
   public void testRequestReaderReadsHeaders(String expectedHeaderName, String expectedHeaderValue, InputStream input)
       throws BadRequestException, MethodNotAllowedException {
     RequestReader reader = new RequestReader(input);
@@ -98,7 +101,7 @@ public class RequestReaderTest {
 
     byte[] requestContent = buffer.array();
 
-    InputStream input = RequestReaderTestProviders.createTestStream(requestContent);
+    InputStream input = new TestInputStream(requestContent);
 
     RequestReader reader = new RequestReader(input);
     HttpRequest request = reader.getRequest();
@@ -116,8 +119,7 @@ public class RequestReaderTest {
 
   @Test
   public void testRequestReaderSetsNullForEmptyBody() throws BadRequestException, MethodNotAllowedException {
-    RequestReader reader = new RequestReader(
-        RequestReaderTestProviders.createTestStream("GET /index.html HTTP/1.1\r\n\r\n".getBytes()));
+    RequestReader reader = new RequestReader(new TestInputStream("GET /index.html HTTP/1.1\r\n\r\n".getBytes()));
     HttpRequest request = reader.getRequest();
 
     assertEquals(0, request.getBody().length);

@@ -10,13 +10,13 @@ public class TestOutputStream extends OutputStream {
   private ByteArrayOutputStream out;
   private int streamIndex;
   private int bodyPointer;
-  private StringBuffer buffer;
+  private int crlfCounter;
 
   public TestOutputStream() {
     this.out = new ByteArrayOutputStream();
     this.streamIndex = 0;
     this.bodyPointer = 0;
-    this.buffer = new StringBuffer();
+    this.crlfCounter = 0;
   }
 
   @Override
@@ -26,13 +26,21 @@ public class TestOutputStream extends OutputStream {
 
     char charValue = (char) b;
     if (charValue == '\r' || charValue == '\n') {
-      buffer.append(charValue);
+      this.crlfCounter++;
     } else {
-      buffer.delete(0, buffer.length() - 1);
+      this.crlfCounter = 0;
     }
 
-    if (buffer.length() == 4) {
+    if (this.crlfCounter == 4 && this.crlfCounter != -1) {
       this.bodyPointer = this.streamIndex;
+      this.crlfCounter = -1;
+    }
+  }
+
+  @Override
+  public void write(byte[] b) throws IOException {
+    for (int i = 0; i < b.length; i++) {
+      this.write(b[i]);
     }
   }
 
@@ -40,8 +48,12 @@ public class TestOutputStream extends OutputStream {
   public String toString() {
     byte[] result = out.toByteArray();
 
-    return new String(
-        Arrays.copyOfRange(result, 0, bodyPointer - 1));
+    if (this.bodyPointer == 0) {
+      return new String(result);
+    } else {
+      return new String(
+          Arrays.copyOfRange(result, 0, bodyPointer - 1));
+    }
   }
 
   public byte[] getBody() {

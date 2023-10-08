@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import webserver667.configuration.MimeTypes;
 import webserver667.requests.HttpRequest;
 import webserver667.responses.IResource;
 import webserver667.responses.authentication.UserAuthenticator;
@@ -108,7 +107,7 @@ public class TestResource implements IResource {
   }
 
   @Override
-  public String getMimeType(MimeTypes types) {
+  public String getMimeType() {
     return this.mimeTypeTestValue;
   }
 

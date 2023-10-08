@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import tests.helpers.responses.TestOutputStream;
 import tests.helpers.responses.TestResource;
+import webserver667.exceptions.ServerErrorException;
 import webserver667.requests.HttpMethods;
 import webserver667.requests.HttpRequest;
 import webserver667.responses.writers.UnauthorizedResponseWriter;
@@ -17,7 +18,7 @@ import webserver667.responses.writers.ResponseWriter;
 public class UnauthorizedResponseWriterTest {
 
   @Test
-  public void testWrite() throws IOException {
+  public void testWrite() throws IOException, ServerErrorException {
     TestResource testResource = new TestResource();
     testResource.setIsProtected(true);
 
