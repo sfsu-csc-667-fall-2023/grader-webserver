@@ -26,7 +26,7 @@ public class LoggerTest {
     request.setURI(testUri);
     request.setVersion("HTTP/1.1");
 
-    String result = Logger.getLogString(testIp, request, resource, 200, (int) fileSize);
+    String result = Logger.getLogString(testIp, request, 200, (int) fileSize);
 
     // Need to figure out how to lock time in test environment, see:
     String expectedStart = String.format("%s - - [", testIp);
