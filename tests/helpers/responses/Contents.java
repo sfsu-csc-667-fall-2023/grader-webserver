@@ -12,9 +12,9 @@ public class Contents {
       System.lineSeparator(),
       String.format("#!%s", getNodePathFromEnvOrDefault()),
       "const content = `Hello world!`",
-      "process.stdout.write('Content-Type: text/html\r\n');",
+      "process.stdout.write('Content-Type: text/html\\r\\n');",
       "process.stdout.write(`Content-Length: ${content.length}`);",
-      "process.stdout.write('\r\n');",
+      "process.stdout.write('\\r\\n');",
       "process.stdout.write(content);");
 
   private static String getNodePathFromEnvOrDefault() {
