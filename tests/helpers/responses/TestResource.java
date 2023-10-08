@@ -29,6 +29,7 @@ public class TestResource implements IResource {
   private String mimeTypeTestValue;
   private UserAuthenticator userAuthenticatorTestValue;
   private Path pathTestValue;
+  private boolean shouldReportModifiedTestValue;
 
   /**
    * Creates a concrete implementation of IResource that describes a file:
@@ -77,6 +78,10 @@ public class TestResource implements IResource {
     return Files.size(this.getPath());
   }
 
+  public void shouldReportModified(boolean answer) {
+    this.shouldReportModifiedTestValue = answer;
+  }
+
   @Override
   public boolean exists() {
     return this.existsTestValue;
@@ -116,4 +121,12 @@ public class TestResource implements IResource {
     return Files.readAllBytes(pathTestValue);
   }
 
+  @Override
+  public long lastModified() {
+    if (this.shouldReportModifiedTestValue) {
+      return this.pathTestValue.toFile().lastModified();
+    } else {
+      return 0;
+    }
+  }
 }

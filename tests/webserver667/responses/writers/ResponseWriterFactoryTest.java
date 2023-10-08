@@ -58,7 +58,7 @@ public class ResponseWriterFactoryTest {
     request.setHttpMethod(HttpMethods.DELETE);
 
     TestResource testResource = new TestResource();
-    testResource.setExists(false);
+    testResource.setExists(true);
     testResource.setPath(Files.createTempFile("doesnt", "matter"));
 
     ResponseWriter writer = ResponseWriterFactory.create(
@@ -101,6 +101,7 @@ public class ResponseWriterFactoryTest {
 
     TestResource resource = new TestResource();
     resource.setPath(file.toPath());
+    resource.shouldReportModified(false);
 
     ResponseWriter writer = ResponseWriterFactory.create(
         new TestOutputStream(),
