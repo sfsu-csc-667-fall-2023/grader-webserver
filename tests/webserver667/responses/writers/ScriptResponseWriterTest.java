@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,10 @@ public class ScriptResponseWriterTest {
   public void testWrite() throws IOException, ServerErrorException {
     TestResource resource = new TestResource();
     resource.setIsScript(true);
-    resource.setPath(TestResource.createTempResourceFile("script", ".js", Contents.NODE_SCRIPT_FILE));
+
+    Path path = TestResource.createTempResourceFile("script", ".js", Contents.NODE_SCRIPT_FILE);
+    path.toFile().setExecutable(true);
+    resource.setPath(path);
 
     TestOutputStream out = new TestOutputStream();
 
@@ -31,16 +35,32 @@ public class ScriptResponseWriterTest {
     ResponseWriter writer = new ScriptResponseWriter(out, resource, request);
     writer.write();
 
-    String expectedOutput = String.join("",
+    String expectedBody = "Hello world!";
+    byte[] expectedHead = String.join("",
+        "HTTP/1.1 200 OK\r\n",
         "Content-Type: text/html\r\n",
         "Content-Length: 12\r\n",
-        "\r\n",
-        "Hello world!");
+        "\r\n").getBytes();
+
+    byte[] head = out.getResponseHead();
+
+    for (int i = 0; i < expectedHead.length; i++) {
+      System.out.println(
+          String.format("%d %d %d %c, %c", i, expectedHead[i], head[i], (char) expectedHead[i], (char) head[i]));
+    }
+
+    assertEquals(expectedHead.length, head.length);
+
+    boolean isHeadEqual = true;
+    for (int i = 0; i < expectedHead.length; i++) {
+      isHeadEqual = isHeadEqual && head[i] == expectedHead[i];
+    }
+    assertTrue(isHeadEqual);
 
     byte[] body = out.getBody();
-    assertEquals(expectedOutput.length(), body.length);
+    assertEquals(expectedBody.length(), body.length);
 
-    byte[] contentBytes = expectedOutput.getBytes();
+    byte[] contentBytes = expectedBody.getBytes();
     boolean isEqual = true;
     for (int i = 0; i < body.length; i++) {
       isEqual = isEqual && body[i] == contentBytes[i];

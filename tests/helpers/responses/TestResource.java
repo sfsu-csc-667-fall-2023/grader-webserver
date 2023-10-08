@@ -73,7 +73,6 @@ public class TestResource implements IResource {
     this.pathTestValue = path;
   }
 
-  @Override
   public long getFileSize() throws IOException {
     return Files.size(this.getPath());
   }

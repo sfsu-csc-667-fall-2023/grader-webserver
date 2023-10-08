@@ -44,15 +44,13 @@ public class TestOutputStream extends OutputStream {
     }
   }
 
-  @Override
-  public String toString() {
+  public byte[] getResponseHead() {
     byte[] result = out.toByteArray();
 
     if (this.bodyPointer == 0) {
-      return new String(result);
+      return result;
     } else {
-      return new String(
-          Arrays.copyOfRange(result, 0, bodyPointer - 1));
+      return Arrays.copyOfRange(result, 0, bodyPointer);
     }
   }
 
