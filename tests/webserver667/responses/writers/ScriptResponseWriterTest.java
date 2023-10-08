@@ -1,9 +1,9 @@
 package tests.webserver667.responses.writers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ public class ScriptResponseWriterTest {
     resource.setIsScript(true);
     resource.setPath(TestResource.createTempResourceFile("script", ".js", Contents.NODE_SCRIPT_FILE));
 
-    OutputStream out = new TestOutputStream();
+    TestOutputStream out = new TestOutputStream();
 
     HttpRequest request = new HttpRequest();
     request.setHttpMethod(HttpMethods.GET);
@@ -31,14 +31,20 @@ public class ScriptResponseWriterTest {
     ResponseWriter writer = new ScriptResponseWriter(out, resource, request);
     writer.write();
 
-    String result = out.toString();
-    String expectedOutput = String.join("\n",
+    String expectedOutput = String.join("",
         "Content-Type: text/html\r\n",
         "Content-Length: 12\r\n",
         "\r\n",
         "Hello world!");
 
-    assertTrue(result.startsWith("HTTP/1.1 200 OK\r\n"));
-    assertTrue(result.contains(expectedOutput));
+    byte[] body = out.getBody();
+    assertEquals(expectedOutput.length(), body.length);
+
+    byte[] contentBytes = expectedOutput.getBytes();
+    boolean isEqual = true;
+    for (int i = 0; i < body.length; i++) {
+      isEqual = isEqual && body[i] == contentBytes[i];
+    }
+    assertTrue(isEqual);
   }
 }

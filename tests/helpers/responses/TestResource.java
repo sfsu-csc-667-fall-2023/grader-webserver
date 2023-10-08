@@ -73,6 +73,7 @@ public class TestResource implements IResource {
     this.pathTestValue = path;
   }
 
+  @Override
   public long getFileSize() throws IOException {
     return Files.size(this.getPath());
   }
@@ -109,6 +110,11 @@ public class TestResource implements IResource {
   @Override
   public String getMimeType() {
     return this.mimeTypeTestValue;
+  }
+
+  @Override
+  public byte[] getFileBytes() throws IOException {
+    return Files.readAllBytes(pathTestValue);
   }
 
 }

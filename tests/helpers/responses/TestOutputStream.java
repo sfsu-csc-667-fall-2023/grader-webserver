@@ -62,7 +62,7 @@ public class TestOutputStream extends OutputStream {
     } else {
       byte[] result = out.toByteArray();
 
-      return Arrays.copyOfRange(result, bodyPointer, result.length - 1);
+      return Arrays.copyOfRange(result, bodyPointer, result.length);
     }
   }
 }

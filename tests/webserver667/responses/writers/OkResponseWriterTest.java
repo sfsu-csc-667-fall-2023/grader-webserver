@@ -1,9 +1,9 @@
 package tests.webserver667.responses.writers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ public class OkResponseWriterTest {
     TestResource testResource = new TestResource();
     testResource.setPath(
         TestResource.createTempResourceFile("fileContent", "fileContent", fileContent));
-    OutputStream out = new TestOutputStream();
+    TestOutputStream out = new TestOutputStream();
 
     ResponseWriter writer = new OkResponseWriter(out, testResource, new HttpRequest());
     writer.write();
@@ -32,6 +32,15 @@ public class OkResponseWriterTest {
     assertTrue(result.startsWith("HTTP/1.1 200 OK\r\n"));
     assertTrue(result.contains("Content-Type: text/html\r\n"));
     assertTrue(result.contains("Content-Length: 7\r\n"));
-    assertTrue(result.endsWith(fileContent));
+
+    byte[] body = out.getBody();
+    assertEquals(fileContent.length(), body.length);
+
+    byte[] contentBytes = fileContent.getBytes();
+    boolean isEqual = true;
+    for (int i = 0; i < body.length; i++) {
+      isEqual = isEqual && body[i] == contentBytes[i];
+    }
+    assertTrue(isEqual);
   }
 }
