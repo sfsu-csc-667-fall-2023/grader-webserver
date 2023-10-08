@@ -3,10 +3,10 @@ package tests.webserver667.responses.writers;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import org.junit.jupiter.api.Test;
 
+import tests.helpers.responses.CompareTestOutputAndExpectedOutput;
 import tests.helpers.responses.TestOutputStream;
 import tests.helpers.responses.TestResource;
 import webserver667.exceptions.ServerErrorException;
@@ -20,14 +20,14 @@ public class BadRequestResponseWriterTest {
   @Test
   public void testWrite() throws IOException, ServerErrorException {
     IResource testResource = new TestResource();
-    OutputStream out = new TestOutputStream();
+    TestOutputStream out = new TestOutputStream();
 
     ResponseWriter writer = new BadRequestResponseWriter(out, testResource, new HttpRequest());
     writer.write();
 
-    String result = out.toString();
+    CompareTestOutputAndExpectedOutput comparator = new CompareTestOutputAndExpectedOutput(out);
 
-    assertTrue(result.startsWith("HTTP/1.1 400 Bad Request\r\n"));
+    assertTrue(comparator.headContains("HTTP/1.1 400 Bad Request\r\n".getBytes()));
   }
 
 }

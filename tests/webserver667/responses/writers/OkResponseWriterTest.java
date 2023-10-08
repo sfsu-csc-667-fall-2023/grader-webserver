@@ -1,12 +1,12 @@
 package tests.webserver667.responses.writers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
+import tests.helpers.responses.CompareTestOutputAndExpectedOutput;
 import tests.helpers.responses.TestOutputStream;
 import tests.helpers.responses.TestResource;
 import webserver667.exceptions.ServerErrorException;
@@ -27,20 +27,11 @@ public class OkResponseWriterTest {
     ResponseWriter writer = new OkResponseWriter(out, testResource, new HttpRequest());
     writer.write();
 
-    String result = out.toString();
+    CompareTestOutputAndExpectedOutput comparator = new CompareTestOutputAndExpectedOutput(out);
 
-    assertTrue(result.startsWith("HTTP/1.1 200 OK\r\n"));
-    assertTrue(result.contains("Content-Type: text/html\r\n"));
-    assertTrue(result.contains("Content-Length: 7\r\n"));
-
-    byte[] body = out.getBody();
-    assertEquals(fileContent.length(), body.length);
-
-    byte[] contentBytes = fileContent.getBytes();
-    boolean isEqual = true;
-    for (int i = 0; i < body.length; i++) {
-      isEqual = isEqual && body[i] == contentBytes[i];
-    }
-    assertTrue(isEqual);
+    assertTrue(comparator.headContains("HTTP/1.1 200 OK\r\n".getBytes()));
+    assertTrue(comparator.headContains("Content-Type: text/html\r\n".getBytes()));
+    assertTrue(comparator.headContains("Content-Length: 7\r\n".getBytes()));
+    assertTrue(comparator.bodyContains(fileContent.getBytes()));
   }
 }
