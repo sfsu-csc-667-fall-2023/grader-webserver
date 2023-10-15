@@ -30,12 +30,15 @@ public class PutTest {
       public void run() {
         ServerStartup.main(
             new String[] {
-                "-p", 9876 + "", "-r", documentRoot.toAbsolutePath().toString()
+                "-p", 9876 + "", "-r", documentRoot.toAbsolutePath().toString(),
+                "-m", "txt text/text"
             });
       }
     }.start();
 
-    URL url = new URI("http://localhost:9876/testPut.html").toURL();
+    String randomDir = (int) Math.floor((Math.random() * 10000000)) + "r";
+
+    URL url = new URI(String.format("http://localhost:9876/%s/testPut.html", randomDir)).toURL();
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("PUT");
     connection.setRequestProperty("Content-Length", fileContent.length() + "");
@@ -49,8 +52,8 @@ public class PutTest {
     assertEquals(201, connection.getResponseCode());
     assertEquals("Created", connection.getResponseMessage());
 
-    File file = new File(
-        documentRoot.toAbsolutePath().toString(), "testPut.html");
+    File file = Paths.get(
+        documentRoot.toAbsolutePath().toString(), randomDir, "testPut.html").toFile();
     assertTrue(file.exists());
 
     List<String> lines = Files.readAllLines(file.toPath());

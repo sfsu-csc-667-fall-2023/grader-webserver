@@ -27,7 +27,8 @@ public class SimpleRequestTest {
       public void run() {
         ServerStartup.main(
             new String[] {
-                "-p", 9876 + "", "-r", documentRoot.toAbsolutePath().toString()
+                "-p", 9876 + "", "-r", documentRoot.toAbsolutePath().toString(),
+                "-m", "txt text/text"
             });
       }
     }.start();
