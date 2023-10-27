@@ -49,8 +49,20 @@ public class PutTest {
     writer.write(fileContent);
     writer.close();
 
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      /* no op */
+    }
+
     assertEquals(201, connection.getResponseCode());
     assertEquals("Created", connection.getResponseMessage());
+
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      /* no op */
+    }
 
     File file = Paths.get(
         documentRoot.toAbsolutePath().toString(), randomDir, "testPut.html").toFile();

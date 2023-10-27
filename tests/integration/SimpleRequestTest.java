@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -20,6 +21,11 @@ public class SimpleRequestTest {
     String testContent = "lhalf9ay0h8y aohg09ahdf 09a0f9 0f9dh a9h ua90auhf 9";
     Path documentRoot = Paths.get(System.getProperty("java.io.tmpdir"));
 
+    try {
+      Files.delete(Path.of(documentRoot.toString(), ".passwords"));
+    } catch (Exception e) {
+      /* no op */
+    }
     Helper.createTestFile(documentRoot, "textFile.txt", testContent);
 
     new Thread() {
@@ -28,7 +34,7 @@ public class SimpleRequestTest {
         ServerStartup.main(
             new String[] {
                 "-p", 9876 + "", "-r", documentRoot.toAbsolutePath().toString(),
-                "-m", "txt text/text"
+                "-m", "text/text txt"
             });
       }
     }.start();
